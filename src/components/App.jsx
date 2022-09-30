@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { useState } from 'react';
 import { Notification } from './Notification/Notification';
 import { Section } from './Section/Section';
 import { FeedbackOptions } from './FeedbackOptions/FeedbackOptions';
@@ -7,39 +7,44 @@ import { Statistics } from './Statistics/Statistics';
 
 
 
-export class App extends Component {
-  state = {
-    good: 0,
-    neutral: 0,
-    bad: 0,
-}
+export const App = () => {
+const [good,setGood] = useState(0)
+const [neutral,setNeutral] = useState(0)
+const [bad,setBad] = useState(0)
 
-  handleClick = acc => {
-    this.setState(prevState => ({
-    [acc]: prevState[acc] + 1,
-  }));
+const handleClick = acc => {
+  switch (acc){
+    case "good" :
+      setGood(prevGood => prevGood + 1)
+      break;
+    case "neutral" :
+      setNeutral(prevNeutral => prevNeutral + 1)
+      break;
+    case "bad" :
+      setBad(prevBad => prevBad + 1)
+      break;
+    default:
+      return
+  }
 };
+ 
 
-  countTotalFeedback = () => {
-    const { good, neutral, bad } = this.state;
+  const countTotalFeedback = () => {
     return good + neutral + bad
 };
 
-  countPositiveFeedbackPercentage = () => {
-    const totalPositive = this.countTotalFeedback()
-    const {good} = this.state
+  const countPositiveFeedbackPercentage = () => {
+    const totalPositive = countTotalFeedback()
     return Math.round(good / totalPositive * 100)
 };
-render() {
-  const { good, neutral, bad } = this.state;
-  const totalFeedback = this.countTotalFeedback();
-  const totalPositiv = this.countPositiveFeedbackPercentage();
-  const options = Object.keys(this.state);
+  const totalFeedback = countTotalFeedback();
+  const totalPositiv = countPositiveFeedbackPercentage();
+  const options = Object.keys({good,neutral,bad});
 
   return (
     <>
     <Section title = "Please leave feedback">
-      <FeedbackOptions options={options}  onLeaveFeedback = {this.handleClick} />
+      <FeedbackOptions options={options}  onLeaveFeedback = {handleClick} />
     </Section>
 
      <Section title="Statistics">
@@ -57,5 +62,4 @@ render() {
      </Section>
     </>
     )
-  }
 };
